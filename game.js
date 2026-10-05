@@ -665,19 +665,26 @@ function chooseOption(idx) {
   showFeedback(opt.type);
   finishTurn();
 }
-
 function applyEffect(eff, social, optType, mult = 1) {
+  const stage = currentStages[stageIdx];
   const before = {};
-  STAT_KEYS.forEach(k => before[k] = stats[k]);
 
+  // 1. 關鍵修復：必須先將目前當下的五角戰力完整備份到 before 裡！
   STAT_KEYS.forEach(k => {
-  if (eff[k]) {
-      let delta = Math.round(eff[k] * mult);
-      delta = Math.max(-12, Math.min(10, delta));
-      stats[k] += delta;
-    }
-    stats[k] = Math.max(0, Math.min(100, stats[k]));
+    before[k] = stats[k] || 0;
   });
+
+  if (eff) {
+    STAT_KEYS.forEach(k => {
+      if (eff[k] !== undefined && typeof eff[k] === 'number') {
+        let delta = Math.round(eff[k] * mult);
+        delta = Math.max(-10, Math.min(10, delta));
+        stats[k] = (stats[k] || 0) + delta;
+      }
+      // 確保數值永遠在 0 到 100 之間，且絕對不是 NaN
+      stats[k] = Math.max(0, Math.min(100, isNaN(stats[k]) ? 50 : stats[k]));
+    });
+  }
 
   updateStats();
   if (social) updateSocial(social.fans || 0);
@@ -687,9 +694,10 @@ function applyEffect(eff, social, optType, mult = 1) {
   if (!dp) return;
   dp.innerHTML = '';
   let any = false;
+
   STAT_KEYS.forEach(k => {
-    const diff = stats[k] - before[k];
-    if (diff !== 0) {
+    const diff = (stats[k] || 0) - (before[k] || 0); 
+    if (diff !== 0 && !isNaN(diff)) {
       any = true;
       const chip = document.createElement('span');
       chip.className = 'delta-chip ' + (diff > 0 ? 'delta-pos' : 'delta-neg');
@@ -697,7 +705,9 @@ function applyEffect(eff, social, optType, mult = 1) {
       dp.appendChild(chip);
     }
   });
+
   if (any) dp.className = 'delta-panel show';
+
   const zeroCount = STAT_KEYS.filter(k => stats[k] <= 0).length;
   const totalStats = STAT_KEYS.reduce((s, k) => s + stats[k], 0);
   const currentMentorScore = mentorScore[selectedMentor] || 50;
@@ -709,21 +719,92 @@ function applyEffect(eff, social, optType, mult = 1) {
     pendingElim = true;
   }
 }
-
+// 📱 8 大場外事件專屬劇本吃瓜反饋庫
+const SPECIFIC_EVENT_COMMENTS = {
+  // s01: 休息室挑釁
+  s01: {
+    A: ['💬 休息室選手私語：「哇這新人被酸還能笑著回應，心態很穩喔。」'],
+    B: ['👀 現場工作人員抓頭：「火氣太大了啦，等下上主播台不要吵起來就好...」'],
+    C: ['💬 對手冷笑：「切，隨便講一句就嚇到不敢講話，抗壓真差。」', '👀 製作人皺眉：「氣場完全被壓過去了，上了大場面容易怯場。」']
+  },
+  // s02: 前輩施壓
+  s02: {
+    A: ['💬 前輩私下對球評說：「這年輕人懂進退、願意虛心求教，底子可以練。」', '👀 導播點頭：「尊重老前輩又能抓到重點，情商滿分！」'],
+    B: ['💬 PTT 棒球板討論：「某素人主播竟然在走廊嗆退役球星，太狂了吧？！」'],
+    C: ['👀 旁觀選手竊笑：「那個白眼被前輩看到了啦，等等講評要被電了。」']
+  },
+  // s05: 深夜 PTT 爆料
+  s05: {
+    A: ['💬 隔天早晨熱議：「選手完全不受爆料影響，早上準時到場備戰，真專業。」', '📢 公關組大讚：「冷處理非常成功！沒有給八卦自媒體續作文章的空間。」'],
+    B: ['💬 PTT 八卦板置底爆文：「本尊開分身小號下場護航被抓包！推文戰了 300 樓！」', '📢 公關組崩潰：「危機處理 0 分！自己跳下去吵架，越描越黑了！」'],
+    C: ['💬 隔天化妝師悄悄話：「他的眼睛腫得跟核桃一樣，昨晚肯定崩潰大哭了吧...」', '👀 導師嘆氣：「心態太脆弱了，做主播哪有不被酸民討論的？」']
+  },
+  // s08: 粉絲出征洗版
+  s08: {
+    A: ['💬 真心粉絲留言：「主播加油！過濾酸民，我們永遠支持你！」'],
+    B: ['💬 網路截圖瘋傳：「主播跟酸民在留言區逐條對罵！火上加油！」', '👀 電視台高層搖頭：「這公關災難...完全被對方粉絲牽著鼻子走了。」'],
+    C: ['💬 鄉民發文嘲諷：「怕被罵直接鎖帳號躲起來？這心理素質不行吧。」']
+  },
+  // s11: 主業加班衝突
+  s11: {
+    A: ['💬 製作人翻看你的筆記：「通勤跟中午都在啃數據，這熱情與意志力我給過！」', '👀 導師小石稱讚：「雖然時間有限，但重點數據抓得很精確！」'],
+    B: ['💬 導播在導播室苦笑：「這選手一聽就是完全沒看球隊資料，純憑直覺在瞎掰。」', '👀 評審私語：「正職忙可以理解，但完全不準備上台就是不負責任。」'],
+    C: ['💬 製作人皺眉：「職業轉播哪有因為累就請假的道理？」']
+  },
+  // s16: 桃色酒吧風波
+  s16: {
+    A: ['💬 公關組評估：極度乾淨俐落的危機處理，緋聞熱度迅速冷卻。'],
+    B: ['💬 娛樂新聞頭條：「主播開直播激動痛哭！自毀形象遭網友狂截表情包！」'],
+    C: ['💬 狗仔隊私語：「完全不回應？這態度好像有點默認的感覺喔。」']
+  },
+  // s20: 搭檔說錯話 (高飛打打打)
+  s20: {
+    A: ['💬 球評在休息時間讚嘆：「剛才接得太漂亮了！完全無縫覆蓋搭檔的口誤！」', '👀 導播在耳機裡拍手：「神反應！這就是搭檔默契的最高境界！」'],
+    B: ['👀 製作團隊無奈：「雖然很有綜藝效果，但把搭檔架在火上烤不太厚道啊。」'],
+    C: ['💬 現場空氣瞬間凝結 2 秒，觀眾彈幕：「剛才那是大放送的尷尬空白嗎...？」'],
+  },
+  // s23: 被嫌播報無聊
+  s23: {
+    A: ['💬 彈幕風向逆轉：「等等，剛才那個關鍵打席交代得超專業！這主播其實很有料！」', '👀 導師卡寶點頭：「不被酸民彈幕帶偏節奏，沉得住氣才是好主播。」'],
+    B: ['💬 彈幕瘋狂洗版：「哈哈哈哈這主播被激怒直接發飆發瘋了！太搞笑了啦！」', '👀 導播頭痛：「這是在播棒球還是脫口秀？專業感完全蕩然無存了。」'],
+    C: ['💬 彈幕持續嘲諷：「有改跟沒改一樣啊，聽起來還是催眠。」', '👀 評審私下講評：「想討好觀眾但改得半吊子，反而失去了自己的原本風格。」']
+  }
+};
 function showFeedback(optType) {
   const t = document.getElementById('feedback-toast');
   if (!t) return;
+
   if (optType === 'timeout') {
-    t.innerHTML = '<div class="judge-line">⏱ 時間到！反應不及格，觀眾開始出現議論。</div>';
+    t.innerHTML = '<div class="judge-line">⏱ 時間到！反應不及格，現場開始出現議論。</div>';
     t.className = 'feedback-toast show wrong';
     return;
   }
-  const judgeLines = getJudgeComment(optType).split('\n');
-  const judgeHTML  =
-    '<div class="feedback-section-label">── 評審評語 ──</div>' +
-    '<div class="judge-panel">' +
-    judgeLines.map(l => '<div class="judge-line">' + l + '</div>').join('') +
-    '</div>';
+
+  const stage = currentStages[stageIdx];
+  let judgeHTML = '';
+  if (stage && stage.isEvent) {
+    const eventData = SPECIFIC_EVENT_COMMENTS[stage.id];
+    let lines = [];
+    if (eventData && eventData[optType]) {
+      lines = eventData[optType];
+    } else {
+      lines = ['💬 現場觀眾：「這應對方式滿特別的，看看後續發展。」', '👀 製作人默默在筆記本下記下一筆。'];
+    }
+
+    judgeHTML =
+      '<div class="feedback-section-label" style="color:var(--purple);">── 幕後風向與現場反應 ──</div>' +
+      '<div class="judge-panel">' +
+      lines.map(l => '<div class="judge-line">' + l + '</div>').join('') +
+      '</div>';
+  } else {
+
+    const judgeLines = getJudgeComment(optType).split('\n');
+    judgeHTML =
+      '<div class="feedback-section-label">── 評審評語 ──</div>' +
+      '<div class="judge-panel">' +
+      judgeLines.map(l => '<div class="judge-line">' + l + '</div>').join('') +
+      '</div>';
+  }
 
   const mentor = getMentor();
   const delta  = calcMentorDelta(optType);
@@ -738,7 +819,6 @@ function showFeedback(optType) {
   t.innerHTML = judgeHTML + mentorHTML;
   t.className = 'feedback-toast show ' + (optType === 'A' ? 'correct' : optType === 'B' ? 'wrong' : 'neutral');
 }
-
 function disableOptions() {
   document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
 }

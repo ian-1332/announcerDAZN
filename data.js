@@ -74,7 +74,6 @@ const JUDGE_COMMENTS = {
     { neutral:'這種播報方式在某個平行宇宙裡是正確的。',  logic:'我理性分析了一下，決定不理性。',           data:'數據顯示猜對機率33%，也不算太差。' }
   ]
 };
-
 function getJudgeComment(optionType) {
   const isWild = Math.random() < 0.20;
   const key    = optionType + (isWild ? '_wild' : '_normal');
@@ -469,7 +468,7 @@ const SPECIAL_POOL = [
  q:'前球星路過你的座位，看了一眼你的戰術筆記冷冷說：「這種記法太外行了。」你選擇？',
  roleBonus:{'v12':{optType:'B',bonus:{fans:2000,speaking:8}},'v7':{optType:'A',bonus:{data:8,term:8}}},
  options:[
-  {text:'不服氣回嗆：「不然你來教我啊？」',type:'B',effect:{speaking:1,reflex:-8,tension:5},social:{ptt:150,fans:-67}},
+  {text:'不服氣回嗆：「不然你來教我啊？」',type:'B',effect:{speaking:1,reflex:-4,tension:5},social:{ptt:150,fans:-67}},
   {text:'虛心請教：「前輩覺得哪裡可以修正？懇請指教。」',type:'A',effect:{data:2,term:2,tension:1},social:{ptt:50,fans:1800}},
   {text:'大翻白眼🤷‍♂️🤷‍♀️😉',type:'C',effect:{},social:{fans:67}}
 ]},
@@ -485,7 +484,7 @@ const SPECIAL_POOL = [
 
 {id:'s08',label:'場外事件：被對手粉絲出征',isEvent:true,
  q:'對手陣營的粉絲集體在你的所有貼文底下洗版「退賽」，評論數量衝破五千，你怎麼面對？',
- roleBonus:{'v7':{optType:'A',bonus:{tension:10,speaking:5}},'v12':{optType:'C',bonus:{fans:3000,speaking:8}}},
+ roleBonus:{'v7':{optType:'A',bonus:{tension:5,speaking:5}},'v12':{optType:'C',bonus:{fans:3000,speaking:8}}},
  options:[
   {text:'逐一回覆越陷越深，整晚沒有休息。',type:'B',effect:{tension:-2,reflex:-1},social:{ptt:600,fans:-4000}},
   {text:'開啟留言過濾，專注在真心支持你的粉絲身上。',type:'A',effect:{speaking:-2,tension:2,reflex:5},social:{ptt:100,fans:3500}},
@@ -494,28 +493,28 @@ const SPECIAL_POOL = [
 
 {id:'s11',label:'場外事件：主業很辛苦，要怎麼準備',isEvent:true,
  q:'節目錄影前三天，你的本業突然接到大案子，加班到深夜，根本沒時間準備播報功課，你怎麼辦？',
- roleBonus:{'v13':{optType:'A',bonus:{tension:8,data:5}},'v17':{optType:'A',bonus:{tension:5,data:5}}},
+ roleBonus:{'v13':{optType:'A',bonus:{tension:2,data:2}},'v17':{optType:'A',bonus:{tension:5,data:5}}},
  options:[
-  {text:'直接放棄準備，去錄影時靠臨場反應硬撐。',type:'B',effect:{speaking:-5,data:-5,term:-2,tension:-2},social:{ptt:100,fans:-800}},
+  {text:'直接放棄準備，去錄影時靠臨場反應硬撐。',type:'B',effect:{speaking:-5,data:-5,term:-2,tension:2},social:{ptt:100,fans:-800}},
   {text:'利用通勤時間聽比賽 podcast、午休看球賽數據，把零碎時間全部用上。',type:'A',effect:{speaking:5,data:5,term:8,tension:1,reflex:8},social:{ptt:80,fans:2000}},
   {text:'跟節目組請假說身體不舒服，先把本業顧好。',type:'C',effect:{tension:-5,reflex:3},social:{ptt:50,fans:-500}}
 ]},
 
 {id:'s16',label:'場外事件：桃色風波',isEvent:true,
  q:'有八卦媒體拍到你就算明天要錄影，深夜還跟異性在酒吧手牽手，隔天標題是「曖昧確定？不顧正業？」，你怎麼處理？',
- roleBonus:{'v2':{optType:'B',bonus:{fans:5000,speaking:5}},'v11':{optType:'B',bonus:{fans:4000}}},
+ roleBonus:{'v2':{optType:'B',bonus:{fans:5000,speaking:2}},'v11':{optType:'B',bonus:{fans:4000}}},
  options:[
   {text:'馬上開直播解釋，越說越激動，最後哭出來被截圖。',type:'B',effect:{tension:-2,reflex:5},social:{ptt:600,fans:5000}},
   {text:'發一句簡短聲明：「純屬友人，謝謝關心，請把注意力放在節目本身。」',type:'A',effect:{tension:5,reflex:1},social:{ptt:200,fans:3000}},
-  {text:'完全不回應，讓炒作自然消退，繼續專注練習。',type:'C',effect:{speaking:3,tension:2,reflex:5},social:{ptt:300,fans:2000}}
+  {text:'完全不回應，讓炒作自然消退，繼續專注練習。',type:'C',effect:{speaking:2,tension:2,reflex:5},social:{ptt:300,fans:2000}}
 ]},
 
 {id:'s20',label:'突發狀況：搭檔主播說錯話',isEvent:true,
  q:'你的搭檔主播在直播中把「高飛犧牲打」說成「高飛打打打」，全場一片靜默，你必須立刻接話，你說什麼？',
  roleBonus:{'v9':{optType:'A',bonus:{speaking:8,reflex:8}},'v25':{optType:'A',bonus:{speaking:5,reflex:5}}},
  options:[
-  {text:'大笑說：「哈哈我搭檔在裝可愛！」把尷尬完全轉移到搭檔身上。',type:'B',effect:{speaking:5,reflex:8,tension:-1,term:-5},social:{ptt:400,fans:2000}},
-  {text:'無縫接話：「也就是說三壘跑者用這支高飛犧牲打順利回本壘得分——」完全覆蓋過去。',type:'A',effect:{speaking:8,reflex:5,tension:6,term:5},social:{ptt:100,fans:3500}},
+  {text:'大笑說：「哈哈我搭檔在裝可愛！」把尷尬完全轉移到搭檔身上。',type:'B',effect:{speaking:5,reflex:2,tension:-1,term:-5},social:{ptt:400,fans:2000}},
+  {text:'無縫接話：「也就是說三壘跑者用這支高飛犧牲打順利回本壘得分——」完全覆蓋過去。',type:'A',effect:{speaking:5,reflex:5,tension:3,term:5},social:{ptt:100,fans:3500}},
   {text:'沉默兩秒，尷尬地繼續播報下一球，當作沒聽到。',type:'C',effect:{speaking:-3,reflex:-5,tension:5,term:3},social:{ptt:180,fans:-500}}
 ]},
 
@@ -567,7 +566,7 @@ const ENDINGS = [
     rank: '🥈', titleClass: '',
     title: name => name + ' ── 準簽約候補主播',
     subtitle: (name, seed, role, mentor) =>
-      '你在這場頂級選秀中穩定發揮，最終高居全場第 ' + s.ranking + ' 名。' +
+      '你在這場頂級選秀中穩定發揮，最終殺入第三名。' +
       mentor.icon + ' ' + mentor.name + ' 私下告訴製作團隊：「實力非常出色，如果首選因故無法出賽，第一個簽的就是他。」（種子碼：' + seed + '）'
   },
 
