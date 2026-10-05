@@ -1,0 +1,1170 @@
+/* ══════════════════════════════════
+   CSS 變數
+══════════════════════════════════ */
+:root {
+  /* 基礎背景與卡片 */
+  --bg:         #0f1115;
+  --card:       #181c24;
+  --card2:      #212631;
+  --border:     #2e3646;
+  --border2:    #3f485f;
+  
+  /* 主題色 */
+  --gold:       #f5c842;
+  --gold2:      #e8b520;
+  
+  /* 狀態與戰力條顏色 */
+  --green:      #3ecf7a;   /* 增加/好評 */
+  --red:        #e84040;   /* 扣分/危機 */
+  --blue:       #3ab0f0;   /* 數據/口條 */
+  --purple:     #a078f8;   /* 網路人氣/粉絲 */
+  --orange:     #f08030;   /* PTT/術語 */
+
+  /* 文字 */
+  --text:       #f8fafc;
+  --text2:      #94a3b8;
+  --text3:      #64748b;
+  
+  --accent-glow: rgba(245, 200, 66, 0.15);
+}
+
+/* ══════════════════════════════════
+   Reset & Base (修復反白與選取問題)
+══════════════════════════════════ */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* 防止不必要的藍底反白與文字被選取 */
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px 40px;
+  /* 讓一般文字預設不能被隨意反白，提升介面精緻感 */
+  user-select: none;
+}
+
+/* 允許輸入框內的文字被選取與編輯 */
+input, textarea {
+  user-select: text;
+}
+
+.wrap { width: 100%; max-width: 620px; }
+
+/* ══════════════════════════════════
+   畫面切換（淡入）
+══════════════════════════════════ */
+.screen { display: none; opacity: 0; }
+.screen.active {
+  display: block;
+  animation: screenFadeIn 0.4s ease forwards;
+}
+@keyframes screenFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════
+   按鈕與互動樣式
+══════════════════════════════════ */
+.gender-btn, .btn-seed-roll, .option-btn {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  color: var(--text2);
+}
+
+.gender-btn:hover, .btn-seed-roll:hover, .option-btn:hover {
+  border-color: var(--gold);
+  color: var(--text);
+  background: #28303e;
+}
+
+.gender-btn.active, .mentor-select-card.selected {
+  border-color: var(--gold);
+  background: rgba(245, 200, 66, 0.08);
+  color: var(--gold);
+}
+
+/* ══════════════════════════════════
+   進場動畫與直播大廳 (Intro Screen)
+══════════════════════════════════ */
+#intro-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
+
+#intro-screen.active { display: flex; }
+#intro-screen.fade-out { opacity: 0; pointer-events: none; }
+
+#intro-screen::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+  background: linear-gradient(to top, #0a0800 0%, transparent 100%);
+  z-index: 0;
+}
+
+#intro-screen::after {
+  content: '';
+  position: absolute;
+  bottom: 12%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(245,200,66,0.3) 20%, rgba(245,200,66,0.8) 50%, rgba(245,200,66,0.3) 80%, transparent 100%);
+  box-shadow: 0 0 20px rgba(245,200,66,0.4);
+  z-index: 1;
+}
+
+.intro-wrap {
+  text-align: center;
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  padding: 0 24px;
+  z-index: 10;
+}
+
+.intro-live-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease 0.2s forwards;
+}
+
+.intro-live-dot {
+  width: 10px; height: 10px;
+  background: #e84040;
+  border-radius: 50%;
+  animation: livePulse 1s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(232,64,64,0.6);
+}
+
+.intro-live-text {
+  font-size: 12px; font-weight: 700; letter-spacing: 5px; color: #e84040;
+}
+
+.intro-logo {
+  font-size: 11px; letter-spacing: 6px; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 16px;
+  opacity: 0; animation: fadeInUp 0.5s ease 0.4s forwards;
+}
+
+.intro-player-name {
+  font-size: clamp(22px, 6vw, 36px);
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  opacity: 0;
+  animation: fadeInUp 0.6s ease 0.7s forwards;
+}
+
+.intro-mentor-name {
+  font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeInUp 0.5s ease 1.0s forwards;
+}
+
+.intro-title {
+  font-size: clamp(28px, 7vw, 44px);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 5px;
+  line-height: 1.1;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: titleReveal 0.8s ease 1.3s forwards;
+}
+
+.intro-countdown {
+  font-size: 72px; font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 12px rgba(245,200,66,0.4));
+}
+
+.intro-enter-btn {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: #000;
+  border: none;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  border-radius: 10px;
+  cursor: pointer;
+  animation: pulseGold 1.5s ease-in-out infinite;
+  transition: transform 0.1s;
+  font-family: inherit;
+  box-shadow: 0 4px 20px rgba(245,200,66,0.3);
+}
+
+/* ══════════════════════════════════
+   遊戲大廳與表單 (Setup Screen)
+══════════════════════════════════ */
+.game-header { text-align: center; padding: 28px 0 20px; }
+.game-header .logo {
+  font-size: 11px; letter-spacing: 4px; color: var(--text3);
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.game-header h1 { font-size: 26px; font-weight: 700; color: var(--gold); line-height: 1.2; }
+.game-header p  { font-size: 13px; color: var(--text2); margin-top: 6px; }
+
+.setup-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin: 15px 0;
+}
+.input-group { margin-bottom: 14px; }
+.input-group label {
+  display: block; font-size: 12px; color: var(--text2);
+  margin-bottom: 6px; letter-spacing: 1px;
+}
+.input-field {
+  width: 100%; background: var(--card2); border: 1.5px solid var(--border2);
+  border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 14px;
+  outline: none; transition: border-color 0.15s; font-family: inherit;
+}
+.input-field:focus { border-color: var(--gold); }
+.setup-note { text-align: center; font-size: 12px; color: var(--text3); margin-top: 10px; }
+
+.seed-input-row { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
+.seed-field {
+  flex: 1; font-size: 16px; text-transform: uppercase;
+  letter-spacing: 4px; font-weight: 700; text-align: center;
+}
+.btn-seed-roll {
+  background: var(--card2); border: 1.5px solid var(--gold); color: var(--gold);
+  border-radius: 10px; padding: 12px 16px; font-size: 13px; font-weight: 700;
+  cursor: pointer; white-space: nowrap; font-family: inherit;
+}
+.seed-hint { font-size: 11px; color: var(--text3); text-align: center; margin-top: 6px; }
+
+.gender-row { display: flex; gap: 8px; margin-top: 6px; }
+.gender-btn {
+  flex: 1; background: var(--card2); border: 1.5px solid var(--border2);
+  color: var(--text2); border-radius: 10px; padding: 11px 8px; font-size: 13px;
+  font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.gender-btn.active { border-color: var(--gold); background: #1e1a07; color: var(--gold); }
+
+.mentor-select-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; margin: 12px 0 16px;
+}
+.mentor-select-card {
+  background: var(--card); border: 1.5px solid var(--border2);
+  border-radius: 12px; padding: 14px 12px; cursor: pointer;
+  text-align: center; transition: 0.15s;
+}
+.mentor-select-card:hover { border-color: var(--gold); }
+.mentor-select-card.selected { border-color: var(--gold); background: #1e1a07; }
+.mentor-select-icon  { font-size: 28px; margin-bottom: 6px; }
+.mentor-select-name  { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.mentor-select-title { font-size: 10px; color: var(--gold); letter-spacing: 1px; margin-bottom: 8px; }
+.mentor-select-desc  { font-size: 11px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; min-height: 48px; }
+.mentor-select-bonus { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.msb-chip { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 5px; }
+.msb-up   { background: #0d2010; color: var(--green); }
+.msb-down { background: #200d0d; color: var(--red); }
+
+/* ══════════════════════════════════
+   通用按鈕
+══════════════════════════════════ */
+.btn-primary {
+  display: block; width: 100%; background: var(--gold); color: #000;
+  border: none; padding: 15px; font-size: 15px; font-weight: 700;
+  border-radius: 10px; cursor: pointer; transition: 0.15s;
+  margin-top: 8px; font-family: inherit;
+}
+.btn-primary:hover { background: var(--gold2); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.btn-secondary {
+  display: block; width: 100%; background: transparent; color: var(--text2);
+  border: 1.5px solid var(--border2); padding: 13px; font-size: 14px;
+  border-radius: 10px; cursor: pointer; margin-top: 10px; font-family: inherit;
+}
+
+/* ══════════════════════════════════
+   遊戲主介面與戰力條 (Game Screen)
+══════════════════════════════════ */
+.stage-progress { display: flex; gap: 4px; margin-bottom: 18px; }
+.stage-pip { flex: 1; height: 3px; background: var(--border2); border-radius: 2px; }
+.stage-pip.done { background: var(--gold); }
+.stage-pip.active { background: var(--gold2); opacity: 0.8; }
+.stage-pip.event.done { background: var(--purple); }
+.stage-pip.event.active { background: var(--purple); opacity: 1; box-shadow: 0 0 6px var(--purple); }
+
+.stats-panel {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+}
+.stats-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+.stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.stat-name    { font-size: 12px; color: var(--text2); width: 54px; flex-shrink: 0; }
+.stat-bar-bg  { flex: 1; height: 5px; background: var(--border2); border-radius: 3px; overflow: hidden; }
+.stat-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.bar-speaking { background: var(--green); }
+.bar-reflex   { background: var(--blue); }
+.bar-data     { background: var(--purple); }
+.bar-term     { background: var(--orange); }
+.bar-tension  { background: var(--red); }
+.stat-val { font-size: 12px; font-weight: 600; width: 26px; text-align: right; }
+
+.single-mentor-panel {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px; margin-bottom: 14px;
+}
+.single-mentor-label { font-size: 13px; font-weight: 700; color: var(--gold); width: 90px; flex-shrink: 0; }
+.single-mentor-bar-bg { flex: 1; height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; }
+.single-mentor-bar-fill { height: 100%; border-radius: 3px; background: var(--gold); }
+.single-mentor-val { font-size: 13px; font-weight: 700; color: var(--gold); width: 28px; text-align: right; }
+
+.social-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.social-card  { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.social-card .sc-label { font-size: 11px; color: var(--text3); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+.social-card .sc-val   { font-size: 22px; font-weight: 700; }
+.sc-ptt .sc-val  { color: var(--orange); }
+.sc-fans .sc-val { color: var(--purple); }
+.sc-val-unit  { font-size: 12px; font-weight: 400; color: var(--text2); margin-left: 2px; }
+.social-trend { font-size: 11px; margin-top: 3px; }
+.trend-up   { color: var(--green); }
+.trend-down { color: var(--red); }
+.trend-flat { color: var(--text3); }
+
+.timer-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.timer-bar-bg   { flex: 1; height: 6px; background: var(--border2); border-radius: 3px; overflow: hidden; }
+.timer-bar-fill { height: 100%; border-radius: 3px; background: var(--green); transition: width 1s linear; }
+.timer-num { font-size: 13px; font-weight: 600; color: var(--text2); width: 22px; text-align: right; }
+
+#match-tag { font-size: 11px; color: var(--text3); letter-spacing: 1px; margin-bottom: 6px; display: none; }
+.question-label {
+  font-size: 11px; color: var(--gold); letter-spacing: 2px;
+  text-transform: uppercase; margin-bottom: 8px; font-weight: 600;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+}
+.question-label.event-label { color: var(--purple); }
+.question-text { font-size: 15px; line-height: 1.65; color: var(--text); margin-bottom: 20px; }
+
+.difficulty-tag {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 5px; letter-spacing: 1px;
+}
+.diff-easy   { background: #0d2010; color: var(--green); }
+.diff-normal { background: #221c08; color: var(--gold); }
+.diff-hard   { background: #200d0d; color: var(--red); }
+
+.option-btn {
+  display: block; width: 100%; background: var(--card); color: var(--text);
+  border: 1.5px solid var(--border2); border-radius: 10px; padding: 14px 16px;
+  font-size: 14px; line-height: 1.5; text-align: left; cursor: pointer;
+  transition: 0.15s; margin-bottom: 8px; font-family: inherit;
+}
+.option-btn:hover:not(:disabled) { border-color: var(--gold); background: #1c1908; }
+.option-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.option-btn.correct-flash { border-color: var(--green); background: #0a1a0f; color: var(--green); }
+.option-btn.wrong-flash   { border-color: var(--red);   background: #1a0a0a; color: var(--red); }
+.option-btn.neutral-flash { border-color: var(--gold);  background: #1c1908; color: var(--gold); }
+
+.feedback-toast {
+  background: var(--card2); border-left: 3px solid var(--gold);
+  border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--text2);
+  line-height: 1.5; margin-top: 12px; display: none;
+}
+.feedback-toast.show    { display: block; }
+.feedback-toast.correct { border-color: var(--green); }
+.feedback-toast.wrong   { border-color: var(--red); }
+.feedback-toast.neutral { border-color: var(--gold); }
+
+.feedback-section-label { font-size: 11px; color: var(--text3); letter-spacing: 2px; margin: 10px 0 6px; }
+.judge-panel { display: flex; flex-direction: column; gap: 6px; }
+.judge-line  {
+  font-size: 12px; color: var(--text2); padding: 6px 10px;
+  background: var(--card); border-radius: 8px; border-left: 3px solid var(--border2);
+}
+.mentor-reaction-row  { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.mentor-reaction-chip { font-size: 13px; font-weight: 700; padding: 5px 12px; border-radius: 8px; }
+.mentor-delta-up   { background: #0d2010; color: var(--green); }
+.mentor-delta-down { background: #200d0d; color: var(--red); }
+.mentor-delta-flat { background: var(--card); color: var(--text3); }
+
+.delta-panel { display: none; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.delta-panel.show { display: flex; }
+.delta-chip { font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+.delta-pos  { background: #0d2010; color: var(--green); }
+.delta-neg  { background: #200d0d; color: var(--red); }
+
+.next-btn      { display: none; }
+.next-btn.show { display: block; }
+
+/* ══════════════════════════════════
+   決賽介面（移除所有半透明遮罩與光暈干擾）
+══════════════════════════════════ */
+#game-screen.is-final {
+  background: #000000;
+}
+
+#game-screen.is-final::before,
+#game-screen.is-final::after {
+  content: none !important;
+}
+
+/* 確保決賽時的選項按鈕 100% 實心、不透明、絕對點得到 */
+#game-screen.is-final .option-btn {
+  background: #11141d !important;
+  border: 1.5px solid var(--gold) !important;
+  color: var(--text) !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 999 !important; /* 確保選項永遠在最最最上層 */
+}
+
+/* 決賽選項滑鼠懸停時的清晰反饋 */
+#game-screen.is-final .option-btn:hover:not(:disabled) {
+  background: #25200a !important;
+  border-color: var(--gold2) !important;
+  box-shadow: 0 0 10px rgba(245, 200, 66, 0.4) !important;
+}
+
+/* 確保決賽其他面板文字清楚、毫無透明遮罩 */
+#game-screen.is-final .stats-panel,
+#game-screen.is-final .single-mentor-panel,
+#game-screen.is-final .social-card,
+#game-screen.is-final .question-text {
+  background: var(--card) !important;
+  opacity: 1 !important;
+  color: var(--text) !important;
+}
+
+/* ══════════════════════════════════
+   淘汰與結果頁
+══════════════════════════════════ */
+.elim-hero  { text-align: center; padding: 30px 0 16px; }
+.elim-icon  { font-size: 54px; margin-bottom: 10px; }
+.elim-title { font-size: 22px; font-weight: 700; color: var(--red); margin-bottom: 8px; }
+.elim-sub   { font-size: 13px; color: var(--text2); line-height: 1.6; max-width: 400px; margin: 0 auto; }
+.revive-box {
+  background: var(--card); border: 1.5px solid var(--purple);
+  border-radius: 12px; padding: 18px 16px; margin: 20px 0; text-align: center;
+}
+.revive-box h3 { font-size: 15px; color: var(--purple); margin-bottom: 6px; }
+.revive-box p  { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 14px; }
+.btn-revive {
+  display: block; width: 100%; background: var(--purple); color: #fff;
+  border: none; padding: 14px; font-size: 14px; font-weight: 700;
+  border-radius: 10px; cursor: pointer; font-family: inherit;
+}
+
+/* ══════════════════════════════════
+   精緻化結算頁面：英雄區 (Result Hero)
+══════════════════════════════════ */
+.result-hero {
+  text-align: center;
+  padding: 16px 12px 12px;
+  background: radial-gradient(circle at center, rgba(245, 200, 66, 0.08) 0%, transparent 70%);
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+
+#r-rank {
+  font-size: 44px !important; /* 縮小苗芽/獎盃圖示，精緻不突兀 */
+  line-height: 1;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+}
+
+#r-title {
+font-size: 20px !important; /* 選手名字與稱號主標題適中 */
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+#r-subtitle {
+  font-size: 13px !important; /* 導師評語與種子碼改為舒適、易讀的小字 */
+  color: var(--text2) !important;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 0 8px;
+}
+.result-social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; }
+.result-soc-card   { background: var(--card); border: 1px solid var(--border2); border-radius: 10px; padding: 14px 16px; text-align: center; }
+.result-soc-card .rs-icon  { font-size: 22px; margin-bottom: 4px; }
+.result-soc-card .rs-val   { font-size: 26px; font-weight: 700; }
+.rs-ptt  { color: var(--orange); }
+.rs-fans { color: var(--purple); }
+.result-soc-card .rs-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+.divider       { height: 1px; background: var(--border); margin: 20px 0; }
+.section-title { font-size: 11px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; margin-top: 20px; }
+
+.final-mentor-card     { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.final-mentor-card.chosen-mentor { border-color: var(--gold); background: #1a1608; }
+.final-mentor-header   { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.final-mentor-name     { font-size: 13px; font-weight: 700; color: var(--text); }
+.final-mentor-score    { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 6px; }
+.final-mentor-bar-high { background: #0d2010; color: var(--green); }
+.final-mentor-bar-mid  { background: #221c08; color: var(--gold); }
+.final-mentor-bar-low  { background: #200d0d; color: var(--red); }
+.final-mentor-comment  { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.style-analysis-card {
+  background: linear-gradient(135deg, #0e0c04, #161616);
+  border: 1.5px solid rgba(245,200,66,0.25);
+  border-radius: 14px;
+  padding: 20px 18px;
+  text-align: center;
+  margin-bottom: 8px;
+}
+.style-icon  { font-size: 36px; margin-bottom: 10px; }
+.style-title { font-size: 18px; font-weight: 800; color: var(--gold); margin-bottom: 8px; }
+.style-desc  { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+.style-bar-row { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.style-bar-chip { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+.style-bar-a { background: #0d1a2a; color: var(--blue); }
+.style-bar-b { background: #200d0d; color: var(--red); }
+.style-bar-c { background: #1a1a2e; color: var(--purple); }
+
+.cta-label { font-size: 13px; color: var(--text2); text-align: center; margin: 20px 0 12px; }
+.btn-cta-primary {
+  display: block; width: 100%; background: var(--gold); color: #000;
+  border: none; padding: 15px; font-size: 15px; font-weight: 700;
+  border-radius: 10px; text-decoration: none; text-align: center; margin-bottom: 10px;
+}
+.btn-cta-secondary {
+  display: block; width: 100%; background: transparent; color: var(--purple);
+  border: 1.5px solid var(--purple); padding: 13px; font-size: 14px; font-weight: 600;
+  border-radius: 10px; text-decoration: none; text-align: center; margin-bottom: 10px;
+}
+.btn-tertiary {
+  display: block; width: 100%; background: transparent; color: var(--text3);
+  border: 1.5px solid var(--border2); padding: 13px; font-size: 14px;
+  border-radius: 10px; cursor: pointer; text-align: center; margin-bottom: 10px;
+}
+
+/* ══════════════════════════════════
+   動態效果關鍵影格 (Keyframes)
+══════════════════════════════════ */
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px rgba(232,64,64,0.6); }
+  50%      { opacity: 0.3; transform: scale(0.8); box-shadow: none; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes titleReveal {
+  from { opacity: 0; filter: blur(8px); transform: scale(0.96); }
+  to   { opacity: 1; filter: blur(0);   transform: scale(1); }
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 4px 20px rgba(245,200,66,0.3); }
+  50%      { box-shadow: 0 4px 30px rgba(245,200,66,0.6); }
+}
+/* ══════════════════════════════════
+   決賽 Banner 專屬金銀奢華設計
+══════════════════════════════════ */
+.final-banner {
+  display: none !important;
+}
+
+#game-screen.is-final .final-banner {
+  display: block !important;
+  text-align: center;
+  padding: 16px 20px;
+  margin: 10px 0 16px;
+  background: linear-gradient(135deg, #0d0f14 0%, #1a1608 50%, #0d0f14 100%);
+  border: 1.5px solid transparent;
+  border-image: linear-gradient(135deg, var(--gold), var(--silver), var(--gold)) 1;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(245, 200, 66, 0.2), inset 0 0 15px rgba(245, 200, 66, 0.05);
+  animation: fadeInUp 0.4s ease forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 加上一道掃光特效，增加高級質感 */
+#game-screen.is-final .final-banner::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(60deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%);
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: bannerShimmer 4s infinite linear;
+}
+
+@keyframes bannerShimmer {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(100%) rotate(25deg); }
+}
+
+/* 上方小字：DAZN Original */
+#game-screen.is-final .final-banner-text {
+  font-size: 12px;
+  letter-spacing: 8px;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--text3), var(--silver), var(--text3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* 主標題：改用絕對看得見、高對比的金銀立體質感 */
+#game-screen.is-final .final-banner-title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: #f5c842 !important; /* 給一個保底的金黃色，確保絕對看得見 */
+  background: linear-gradient(135deg, #fff5cc 0%, #f5c842 50%, #e0e0e0 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); /* 加上深色陰影讓文字跳出來 */
+  filter: drop-shadow(0 0 10px rgba(245, 200, 66, 0.6));
+}
+/* ══════════════════════════════════
+   YouTube 嵌入影片響應式容器
+══════════════════════════════════ */
+.video-embed-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 比例 */
+  height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1.5px solid var(--border2);
+  background: var(--card);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 10px;
+}
+
+.video-embed-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.video-embed-container:hover {
+  border-color: var(--gold);
+}
+/* ══════════════════════════════════
+   轉播圖片容器（完美防爆版）
+══════════════════════════════════ */
+.stage-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* 強制維持 16:9 比例 */
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;      /* 關鍵：超出容器的部分會自動隱藏，絕不撐爆 */
+  border: 1.5px solid var(--border2);
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+.stage-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* 讓圖片自動填滿 16:9 框框，不變形 */
+  display: block;
+}
+
+/* 畫面上的 LIVE 浮水印 */
+.live-badge-overlay {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: rgba(232, 64, 64, 0.85);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 5;
+}
+.sc-rank .sc-val {
+  color: var(--gold);
+}
+/* ══════════════════════════════════
+   結果頁社群與戰績卡三欄並排樣式
+══════════════════════════════════ */
+
+/* 將原本的 2 欄改為 3 欄並排 */
+.result-social-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* 三欄：排名、粉絲、按鈕 */
+  gap: 8px;
+  margin: 18px 0;
+}
+
+/* 戰績卡生成按鈕卡片 */
+.share-card-card {
+  background: linear-gradient(135deg, #181c24, #221c35) !important;
+  border: 1.5px solid var(--purple) !important;
+  border-radius: 10px;
+  padding: 12px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  font-family: inherit;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-card-card:hover {
+  background: rgba(160, 120, 248, 0.15) !important;
+  border-color: #540be6 !important;
+  box-shadow: 0 0 12px rgba(160, 120, 248, 0.3);
+  transform: translateY(-2px);
+}
+
+.share-card-card:active {
+  transform: scale(0.97);
+}
+
+/* 手機版自動改為單欄直排，避免擠壓 */
+@media (max-width: 480px) {
+  .result-social-row {
+    grid-template-columns: 1fr; 
+  }
+}
+/* ══════════════════════════════════
+   手機版一屏到底（No-Scroll）介面優化
+══════════════════════════════════ */
+.mobile-top-bar {
+  display: none; /* 預設電腦版隱藏 */
+}
+@media (max-width: 480px) {
+  /* 稍微縮減手機版答題時的上下留白與戰力條高度 */
+  body {
+    padding: 12px 10px 30px;
+  }
+  
+  .stats-panel {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
+
+  .stage-image-container {
+    max-height: 160px; /* 限制圖片高度，確保選項不超出螢幕 */
+  }
+
+  .question-text {
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .option-btn {
+    padding: 12px 14px;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+}
+
+  /* 2. 讓評語區塊緊湊顯示，不超出畫面 */
+  .feedback-toast {
+    padding: 8px 10px;
+    font-size: 11px;
+    margin-top: 6px;
+  }
+  .judge-line {
+    padding: 3px 6px;
+    font-size: 11px;
+  }
+
+  /* 3. 【Result 頁面】取消三欄，改為兩欄並排（排名 + 產生戰績卡按鈕） */
+  .result-social-row {
+    grid-template-columns: 1fr 1fr !important; /* 兩欄並排 */
+    gap: 8px;
+  }
+  /* ══════════════════════════════════
+   參考圖風格：可展開式狀態選單 (Dropdown Menu)
+══════════════════════════════════ */
+.dropdown-status-card {
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.dropdown-status-card:hover {
+  border-color: var(--gold);
+}
+
+.dsc-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dsc-subtitle {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.dsc-main-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.dsc-arrow {
+  font-size: 12px;
+  color: var(--text2);
+  transition: transform 0.3s ease;
+}
+
+/* 展開時箭頭旋轉 */
+.dropdown-status-card.open .dsc-arrow {
+  transform: rotate(180deg);
+}
+
+.dsc-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+  padding: 0 16px;
+  background: rgba(0,0,0,0.2);
+}
+
+.dropdown-status-card.open .dsc-content {
+  max-height: 200px;
+  padding: 8px 16px 14px;
+}
+
+/* ══════════════════════════════════
+   參考圖風格：中央主事件大卡片 (Event Card)
+══════════════════════════════════ */
+.event-card-container {
+  background: var(--card);
+  border: 1.5px solid var(--border2);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.ec-category {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: inline-block;
+  background: rgba(160, 120, 248, 0.1);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.ec-content-box {
+  background: rgba(18, 22, 34, 0.6);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 8px;
+}
+
+.question-text {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* 參考圖風格的厚實選項按鈕 */
+.option-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, #121622, #1d2538);
+  color: var(--text);
+  border: 1.5px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 10px;
+  font-family: inherit;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #1d2538, #2a3550);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245,200,66,0.2);
+}/* ══════════════════════════════════
+   全新結算頁面：金銀英雄區與摺疊區樣式
+══════════════════════════════════ */
+
+/* 頁面最強金色大 CTA 戰績卡按鈕 */
+#share-card-btn {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), #d4a574);
+  color: #000;
+  font-size: 16px;
+  font-weight: 800;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: none;
+  margin: 16px 0;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(245, 200, 66, 0.3);
+  transition: transform 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+
+#share-card-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 25px rgba(245, 200, 66, 0.45);
+}
+
+#share-card-btn:active {
+  transform: scale(0.98);
+}
+
+/* 摺疊區 (Accordion) 質感樣式 */
+details.stats-accordion,
+details.style-accordion {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+
+details.stats-accordion:hover,
+details.style-accordion:hover {
+  border-color: var(--border2);
+}
+
+details summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text2);
+  padding: 12px 16px;
+  list-style: none; /* 移除預設的小箭頭 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card2);
+  transition: color 0.15s;
+}
+
+details summary::-webkit-details-marker {
+  display: none; /* Safari 移除預設箭頭 */
+}
+
+details summary::after {
+  content: '▼';
+  font-size: 10px;
+  color: var(--text3);
+  transition: transform 0.2s;
+}
+
+details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+details summary:hover {
+  color: var(--text);
+}
+/* ══════════════════════════════════
+   戰績卡預覽彈窗 (Card Preview Modal)
+══════════════════════════════════ */
+.card-modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease forwards;
+}
+
+.card-modal-box {
+  background: #121622;
+  border: 1.5px solid var(--border2);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  text-align: center;
+}
+
+.card-modal-close {
+  position: absolute;
+  top: 14px; right: 14px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-modal-close:hover {
+  color: var(--text);
+  border-color: var(--gold);
+}
+
+.card-modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+
+.card-modal-img-wrap {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.card-modal-img-wrap img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-modal-hint {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 8px;
+}
+/* ══════════════════════════════════
+   進場動畫 Logo：徹底濾除白底，黑字轉為發光白金
+══════════════════════════════════ */
+.intro-logo-box {
+  margin: 0 auto 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: introLogoReveal 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+}
+
+.intro-logo-img {
+  /* 1. 設定適當的大尺寸（橫幅雙標誌建議寬一點） */
+  width: 240px;
+  max-width: 85%;
+  height: auto;
+  display: block;
+  filter: invert(1) drop-shadow(0 0 10px rgba(245, 200, 66, 0.5));
+  mix-blend-mode: screen;
+}
+
+@keyframes introLogoReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.9) translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+/* ══════════════════════════════════
+   頁尾版權與創作者署名樣式
+══════════════════════════════════ */
+.game-footer {
+  text-align: center;
+  padding: 30px 10px 10px;
+  margin-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05); /* 極細的半透明分隔線 */
+}
+
+.footer-credit {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.footer-credit strong {
+  color: var(--gold); /* 你的名字用金黃色高亮，低調有型 */
+  font-weight: 700;
+}
+
+.footer-copyright {
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}

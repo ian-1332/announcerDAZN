@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DAZN THE ANNOUNCER</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+
+<!-- ───── SETUP ───── -->
+<div id="setup-screen" class="screen active">
+  <div class="game-header">
+    <div class="logo">DAZN ORIGINAL</div>
+    <h1>DAZN THE ANNOUNCER</h1>
+    <p>主播養成實境選秀</p>
+  </div>
+
+  <div class="setup-card">
+    <div class="input-group">
+      <label for="user-name">選手姓名 / 暱稱</label>
+      <input type="text" id="user-name" class="input-field"
+        placeholder="例如：家豪、廷廷…" maxlength="12">
+    </div>
+    <div class="input-group">
+      <label for="user-age">年紀</label>
+      <input type="number" id="user-age" class="input-field"
+        placeholder="例如：25" min="16" max="70">
+    </div>
+    
+    <div class="input-group">
+      <label>性別</label>
+      <div class="gender-row">
+        <button type="button" class="gender-btn active" data-gender="male">⚡ 男</button>
+        <button type="button" class="gender-btn" data-gender="female">✨ 女</button>
+        <button type="button" class="gender-btn" data-gender="other">🌀 不透露</button>
+      </div>
+    </div>
+
+    <div class="input-group" style="margin-bottom:0;">
+      <label for="seed-input">種子碼</label>
+      <div class="seed-input-row">
+        <input type="text" id="seed-input" class="input-field seed-field"
+          placeholder="輸入或隨機生成" maxlength="6">
+        <button type="button" class="btn-seed-roll" id="seed-roll-btn">🎲 隨機</button>
+      </div>
+      <div class="seed-hint">種子碼決定你的角色背景與場外事件組合</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px;">選擇你的導師</div>
+  <div class="mentor-select-grid" id="mentor-select-grid">
+    <div class="mentor-select-card" data-mentor="qianyeye">
+      <div class="mentor-select-icon">🥸</div>
+      <div class="mentor-select-name">威爺</div>
+      <div class="mentor-select-title">熱情系導師</div>
+      <div class="mentor-select-desc">巨大聲量，激情四射。</div>
+      <div class="mentor-select-bonus">
+        <span class="msb-chip msb-up">數據 +3</span>
+        <span class="msb-chip msb-up">術語 +3</span>
+        <span class="msb-chip msb-down">口條 -2</span>
+      </div>
+    </div>
+    <div class="mentor-select-card" data-mentor="dapangge">
+      <div class="mentor-select-icon">📚</div>
+      <div class="mentor-select-name">小石</div>
+      <div class="mentor-select-title">歷史資料庫導師</div>
+      <div class="mentor-select-desc">博學多聞，根本就是行走的資料庫</div>
+      <div class="mentor-select-bonus">
+        <span class="msb-chip msb-up">口條 +2</span>
+        <span class="msb-chip msb-up">數據 +3</span>
+        <span class="msb-chip msb-up">術語 +3</span>
+        <span class="msb-chip msb-down">抗壓 -5</span>
+      </div>
+    </div>
+    <div class="mentor-select-card" data-mentor="ningning">
+      <div class="mentor-select-icon">👾</div>
+      <div class="mentor-select-name">卡寶</div>
+      <div class="mentor-select-title">節奏流導師</div>
+      <div class="mentor-select-desc">感性直覺，專注呼吸換氣、語速控制與高潮張力。</div>
+      <div class="mentor-select-bonus">
+        <span class="msb-chip msb-up">口條 +1</span>
+        <span class="msb-chip msb-up">臨場 +5</span>
+        <span class="msb-chip msb-up">抗壓 -2</span>
+        <span class="msb-chip msb-down">數據 -2</span>
+      </div>
+    </div>
+  </div>
+
+  <button type="button" class="btn-primary" id="enter-btn" disabled>確認身分，進入選秀戰場</button>
+  <p class="setup-note">共 7 節點（5 主關 + 2 隨機場外事件）· 任一戰力歸零即遭淘汰</p>
+</div>
+
+<!-- ───── PLAYER INTRO ───── -->
+<div id="intro-screen" class="screen">
+  <div class="intro-wrap">
+    <div class="intro-live-row">
+      <span class="intro-live-dot"></span>
+      <span class="intro-live-text">LIVE</span>
+      <span class="intro-signal-bar s1"></span>
+      <span class="intro-signal-bar s2"></span>
+      <span class="intro-signal-bar s3"></span>
+      <span class="intro-signal-bar s4"></span>
+    </div>
+    <div class="intro-scanline"></div>
+    <div class="intro-logo-box">
+    <img src="assets/c1.png" alt="DAZN Logo" class="intro-logo-img">
+  </div>
+    <div class="intro-player-name" id="intro-player-name"></div>
+    <div class="intro-mentor-name" id="intro-mentor-name"></div>
+    <div class="intro-title">THE ANNOUNCER</div>
+    <div class="intro-countdown" id="intro-countdown"></div>
+    <button type="button" class="intro-enter-btn" id="intro-enter-btn" style="display:none;">
+      ▶ 開始播報
+    </button>
+  </div>
+</div>
+
+<!-- ───── GAME ───── -->
+<div id="game-screen" class="screen">
+  <div class="stage-progress" id="stage-pips"></div>
+
+  <!-- 決賽橫幅 -->
+  <div class="final-banner" id="final-banner">
+    <div class="final-banner-text">DAZN Original × THE ANNOUNCER</div>
+    <div class="final-banner-title">⚡ FINAL ⚡</div>
+  </div>
+
+  <!-- 🌟 參考圖風格：頂部可展開的球員狀態選單 -->
+  <div class="dropdown-status-card" id="status-dropdown-btn">
+    <div class="dsc-header">
+      <div class="dsc-title-area">
+        <span class="dsc-subtitle" id="panel-title">選手狀態</span>
+        <span class="dsc-main-title" id="dsc-player-summary">綜合戰力：250 | 排名 #1</span>
+      </div>
+      <div class="dsc-arrow">▼</div>
+    </div>
+    
+    <!-- 展開後的五角戰力內容 -->
+    <div class="dsc-content" id="dsc-content">
+      <div class="stats-panel" style="margin-bottom:0; border:none; background:transparent;">
+        <div class="stat-row">
+          <div class="stat-name">口條</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-speaking" id="b-speaking" style="width:50%"></div></div>
+          <div class="stat-val" id="v-speaking">50</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">臨場</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-reflex" id="b-reflex" style="width:50%"></div></div>
+          <div class="stat-val" id="v-reflex">50</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">數據</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-data" id="b-data" style="width:50%"></div></div>
+          <div class="stat-val" id="v-data">50</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">術語</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-term" id="b-term" style="width:50%"></div></div>
+          <div class="stat-val" id="v-term">50</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">抗壓</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-tension" id="b-tension" style="width:50%"></div></div>
+          <div class="stat-val" id="v-tension">50</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 隱藏原本佔空間的面板 -->
+  <div style="display:none;">
+    <div class="single-mentor-panel" id="old-mentor-panel"></div>
+    <div class="social-panel" id="old-social-panel"></div>
+  </div>
+
+  <!-- 簡化計時器 -->
+  <div class="timer-row">
+    <div class="timer-bar-bg">
+      <div class="timer-bar-fill" id="timer-fill" style="width:100%"></div>
+    </div>
+    <div class="timer-num" id="timer-num" aria-live="polite">15</div>
+  </div>
+
+  <!-- 🌟 參考圖風格：中央主事件大卡片 -->
+  <div class="event-card-container">
+    <div class="ec-category" id="q-label">—</div>
+    
+    <!-- 轉播圖片（如果有才顯示） -->
+    <div class="stage-image-container" id="stage-img-container" style="display:none;">
+      <img id="stage-img" src="" alt="即時轉播畫面">
+      <div class="live-badge-overlay">🔴 LIVE</div>
+    </div>
+
+    <!-- 內文對話框 / 題目 -->
+    <div class="ec-content-box">
+      <div id="match-tag" style="color: var(--gold); font-weight: 700; margin-bottom: 6px;"></div>
+      <div class="question-text" id="q-text">載入中…</div>
+    </div>
+  </div>
+
+  <!-- 選項按鈕區 -->
+  <div id="options-container"></div>
+  <div class="feedback-toast" id="feedback-toast"></div>
+  <div class="delta-panel"    id="delta-panel"></div>
+  <button type="button" class="btn-primary next-btn" id="next-btn">下一關 →</button>
+</div>
+
+<!-- ───── ELIMINATED ───── -->
+<div id="eliminated-screen" class="screen">
+  <div class="elim-hero">
+    <div class="elim-icon">😵</div>
+    <div class="elim-title">你被淘汰了！</div>
+    <div class="elim-sub" id="elim-sub"></div>
+  </div>
+  <div class="revive-box" id="revive-box">
+    <h3>📺 看預告片，逆境復活</h3>
+    <p>觀看下一季預告，重新點燃鬥志。<br>
+    能力將<strong>重置為初始狀態</strong>，只要你能在剩餘關卡爆發，就有機會成為悲劇英雄。</p>
+    <button type="button" class="btn-revive" id="revive-btn">觀看預告片並復活 ↗</button>
+  </div>
+  <button type="button" class="btn-secondary" id="elim-end-btn">接受淘汰，查看結果</button>
+</div>
+<!-- ───── RESULT ───── -->
+<div id="result-screen" class="screen">
+  <!-- 🏆 頂部英雄區：大榮譽、頭銜、大排名 -->
+  <div class="result-hero" style="text-align: center; padding: 24px 0 16px;">
+    <div class="result-rank" id="r-rank" style="font-size: 64px; margin-bottom: 8px;">🏆</div>
+    <div class="result-title" id="r-title" style="font-size: 28px; font-weight: 800; color: var(--text); margin-bottom: 6px;">挑戰結果</div>
+    <div class="result-subtitle" id="r-subtitle" style="font-size: 20px; color: var(--gold); font-weight: 700;"></div>
+  </div>
+
+  <!-- 導師評語與最終排名動態插入位置 -->
+  <div id="final-mentor-section" class="final-mentor-section"></div>
+
+  <!-- 🥇 英雄區核心 CTA：全頁面最強大按鈕（金色戰績卡生成） -->
+  <div class="result-cta-section" style="text-align: center; margin: 16px 0 24px;">
+    <button type="button" class="btn-cta-primary" id="share-card-btn" style="box-shadow: 0 4px 20px rgba(245, 200, 66, 0.4); font-size: 16px;">
+      📸 產生戰績卡（一鍵預覽與下載分享）
+    </button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 🎬 精彩節目預告影片 -->
+  <div class="section-title">精彩節目預告</div>
+  <div class="video-embed-container">
+    <iframe src="https://www.youtube.com/embed/0m532Swp2NQ" 
+            title="THE ANNOUNCER 預告" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+    </iframe>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 3. 五角戰力總結（可點擊展開/收折） -->
+  <div class="section-title">五角戰力總結</div>
+  <div class="dropdown-status-card" id="result-status-dropdown-btn">
+    <div class="dsc-header">
+      <div class="dsc-title-area">
+        <span class="dsc-subtitle">五角能力分析</span>
+        <span class="dsc-main-title" id="r-dsc-summary">點擊查看詳細五角戰力分佈</span>
+      </div>
+      <div class="dsc-arrow">▼</div>
+    </div>
+    
+    <!-- 展開後的五角戰力條 -->
+    <div class="dsc-content" id="r-dsc-content">
+      <div class="stats-panel" style="margin-bottom:0; border:none; background:transparent;">
+        <div class="stat-row">
+          <div class="stat-name">口條</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-speaking" id="rb-speaking" style="width:0%"></div></div>
+          <div class="stat-val" id="rv-speaking">0</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">臨場</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-reflex" id="rb-reflex" style="width:0%"></div></div>
+          <div class="stat-val" id="rv-reflex">0</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">數據</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-data" id="rb-data" style="width:0%"></div></div>
+          <div class="stat-val" id="rv-data">0</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">術語</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-term" id="rb-term" style="width:0%"></div></div>
+          <div class="stat-val" id="rv-term">0</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-name">抗壓</div>
+          <div class="stat-bar-bg"><div class="stat-bar-fill bar-tension" id="rb-tension" style="width:0%"></div></div>
+          <div class="stat-val" id="rv-tension">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 🎙 播報風格分析 -->
+  <div class="section-title">播報風格分析</div>
+  <div class="style-analysis-card" id="style-analysis-card">
+    <div class="style-icon" id="style-icon">🎙</div>
+    <div class="style-title" id="style-title">—</div>
+    <div class="style-desc"  id="style-desc">—</div>
+    <div class="style-bar-row" id="style-bar-row"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 🚀 外部 CTA 按鈕區 -->
+  <div class="cta-label">想看素人怎麼過關斬將成為正式主播？</div>
+  <a href="https://www.youtube.com/embed/0m532Swp2NQ"
+     target="_blank" class="btn-cta-primary">
+    🎬 觀看完整節目預告
+  </a>
+  <a href="https://www.dazn.com/zh-TW/home"
+     target="_blank" class="btn-cta-secondary">
+    📺 註冊免費看第一集
+  </a>
+  <button type="button" class="btn-tertiary" onclick="location.reload()">重新挑戰</button>
+</div><!-- /result-screen -->
+
+<footer class="game-footer">
+    <div class="footer-credit">Made by Ian Hsu.</div>
+    <div class="footer-copyright">Copyright © Dazn Taiwan. All rights reserved.</div>
+  </footer>
+
+</div><!-- /wrap -->
+
+<!-- 🖼️ 戰績卡預覽彈窗 (Modal 燈箱) -->
+<div class="card-modal-overlay" id="card-modal-overlay" style="display:none;">
+  <div class="card-modal-box">
+    <button type="button" class="card-modal-close" id="card-modal-close">✕</button>
+    <div class="card-modal-title">官方認證戰績卡預覽</div>
+    <div class="card-modal-img-wrap">
+      <img id="card-preview-img" src="" alt="戰績卡預覽">
+    </div>
+    <div class="card-modal-actions">
+      <button type="button" class="btn-primary" id="card-download-confirm-btn">
+        📥 確認下載戰績卡
+      </button>
+      <div class="card-modal-hint">手機用戶亦可「長按上方圖片」直接儲存到相簿 📸</div>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
