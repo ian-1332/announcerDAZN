@@ -1,4 +1,4 @@
-const VIDEO_URL     = "https://www.youtube.com/watch?v=x1pfxmRhmc0";
+const VIDEO_URL     = "https://www.youtube.com/watch?v=0m532Swp2NQ";
 const FULL_SHOW_URL = "https://www.dazn.com/zh-TW/welcome";
 const STAT_KEYS  = ['speaking','reflex','data','term','tension'];
 const STAT_NAMES = {speaking:'口條', reflex:'臨場', data:'數據', term:'術語', tension:'抗壓'};
@@ -434,19 +434,20 @@ const QUESTION_POOL = [
 },
 {
   id: 'q_fin3', phase: '決賽',
-  label: '滿球數生死對決・朱恩逆轉安打',
-  q: '九局下兩好三壞滿球數，朱恩果斷推打出右外野穿越安打送回兩分，完成不可思議的大逆轉！面對這記安打，你如何收尾？',
+  label: '滿球數生死對決・大力士逆轉安打',
+  img: 'assets/q6.png',
+  q: '九局下兩好兩壞，大力士果斷推打出右外野安打送回兩分，完成不可思議的大逆轉！面對這記安打，你如何收尾？',
   roleBonus: { 'v32': { optType: 'C', bonus: { fans: 3500, speaking: 10 } }, 'v25': { optType: 'A', bonus: { speaking: 8, term: 8 } } },
   options: [
-    { text: '「滿球數果斷出棒！穿越內野防線！兩分打點！完成逆轉！朱恩！今晚的救世主！」',
+    { text: '「果斷出棒！穿越內野防線！兩分打點！完成逆轉！這場比賽太刺激啦」',
       type: 'A',
       effect: { speaking: 5, reflex: 10,term: 12, tension: 2 },
       social: { fans: 5000 }   },
-    { text: '「逆轉啦！牛棚完全壓不住，救援失敗，完全擋不住的奇蹟夜！」',
+    { text: '「逆轉啦！牛棚完全壓不住，救援失敗，打者站上來就是要跟你輸贏的氣勢很好」',
       type: 'B',
       effect: { speaking: 8, reflex: 4, data: -8, term: -5, tension: -8 },
       social: { fans: 6000 }   },
-    { text: '「逆轉大奇蹟完全被我算中！朱恩今晚就是超級英雄，完全按照我的預言走！」',
+    { text: '「逆轉大奇蹟完全被我算中！大力士今晚就是超級英雄，完全按照我的預言走！」',
       type: 'C',
       effect: { speaking: 8, reflex: 4, data: -6, term: -1, tension: 5 },
       social: { fans: 2500 }   }
