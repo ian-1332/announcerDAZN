@@ -38,26 +38,28 @@
   /* 防止不必要的藍底反白與文字被選取 */
   -webkit-tap-highlight-color: transparent;
 }
-
 body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center; /* 垂直居中對齊 */
+  justify-content: flex-start;
   padding: 20px 16px 40px;
-  /* 讓一般文字預設不能被隨意反白，提升介面精緻感 */
   user-select: none;
 }
 
-/* 允許輸入框內的文字被選取與編輯 */
 input, textarea {
   user-select: text;
 }
 
-.wrap { width: 100%; max-width: 620px; }
-
+.wrap { 
+  width: 100%; 
+  max-width: 620px; 
+  margin: 0 auto; 
+}
 /* ══════════════════════════════════
    畫面切換（淡入）
 ══════════════════════════════════ */
