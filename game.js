@@ -181,6 +181,10 @@ document.addEventListener('DOMContentLoaded', () => {
       statusCard.classList.toggle('open');
     });
   }
+  const copyBtn = document.getElementById('copy-share-text-btn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', copyShareTextToClipboard);
+  }
 });
 
 function checkEnterBtn() {
@@ -1195,4 +1199,55 @@ function drawStatBox(ctx, x, y, w, h, label, value, color) {
 function formatNum(n) {
   return n >= 10000 ? (n / 10000).toFixed(1) + '萬' : n.toLocaleString();
 }
+}
+
+function copyShareTextToClipboard() {
+  const rank = calcRanking();
+  const total = npcs.length + 1;
+  const analysis = getStyleAnalysis(); // 取得播報風格（如：專業正統派）
+  const endingTitle = document.getElementById('r-title') ? document.getElementById('r-title').textContent : '正式主播';
+  
+  // 自動取得當前網頁的真實網址（上線後會自動抓 GitHub Pages 網址）
+  const shareUrl = window.location.href;
+
+  // 組合超熱血的社群分享文案
+  const shareText = 
+`🎙️ 我在【DAZN THE ANNOUNCER 主播養成大挑戰】獲得了：
+🏆 稱號：${endingTitle}
+📊 最終排名：#${rank} / ${total}
+🎯 播報風格：${analysis.title}
+
+誰敢來挑戰？快來測測你的體育主播潛力 👉
+${shareUrl}`;
+
+  // 寫入剪貼簿 (Clipboard API)
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(shareText).then(() => {
+      showCopyToast();
+    }).catch(() => {
+      fallbackCopyText(shareText);
+    });
+  } else {
+    fallbackCopyText(shareText);
+  }
+}
+
+// 提示複製成功
+function showCopyToast() {
+  alert('📋 戰績與挑戰連結已成功複製到剪貼簿！\n\n快去貼到 Threads、LINE 或社群上向朋友下戰帖吧！🔥');
+}
+
+// 舊型瀏覽器防呆相容
+function fallbackCopyText(text) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.select();
+  try {
+    document.execCommand('copy');
+    showCopyToast();
+  } catch (err) {
+    alert('複製失敗，請手動複製網址分享！');
+  }
+  document.body.removeChild(textArea);
 }
